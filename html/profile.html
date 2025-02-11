@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Page</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f1f1f1;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        .profile-pic {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .profile-pic img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+        input[type="file"] {
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #2874f0;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .edit-btn {
+            float: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Profile Information <button class="edit-btn" onclick="enableEditing()">Edit</button></h2>
+        <div class="profile-pic">
+            <img src="../img/default-profile.png" id="profileImage" alt="Profile Picture">
+            <input type="file" id="fileUpload" accept="image/*" onchange="loadFile(event)">
+        </div>
+        <div class="form-group">
+            <label>First Name</label>
+            <input type="text" id="firstName" value="Rao" disabled>
+        </div>
+        <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" id="lastName" value="Kundan" disabled>
+        </div>
+        <div class="form-group">
+            <label>Email Address</label>
+            <input type="email" id="email" value="raokundan3280@gmail.com" disabled>
+        </div>
+        <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="text" id="mobile" value="+919925729747" disabled>
+        </div>
+        <button id="saveBtn" onclick="saveChanges()" disabled>Save</button>
+    </div>
+    
+    <script>
+        function enableEditing() {
+            document.getElementById("firstName").disabled = false;
+            document.getElementById("lastName").disabled = false;
+            document.getElementById("email").disabled = false;
+            document.getElementById("mobile").disabled = false;
+            document.getElementById("saveBtn").disabled = false;
+        }
+
+        function saveChanges() {
+            alert("Profile updated successfully!");
+        }
+
+        function loadFile(event) {
+            var image = document.getElementById("profileImage");
+            image.src = URL.createObjectURL(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>

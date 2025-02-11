@@ -1,0 +1,97 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f1f3f6;
+}
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    background: #2874f0;
+    padding: 15px;
+    color: white;
+    align-items: center;
+}
+.logo{
+    font-size: 20px;
+    font-weight: bold;
+}
+.search-bar{
+    width: 40%;
+    padding: 8px;
+    border-radius: 4px;
+    border:none;
+
+}
+user-menu{
+    cursor: pointer;
+}
+.container{
+    display: flex;
+    margin: 20px;
+}
+.sidebar .profile{
+    text-align: center;
+    margin-bottom: 20px;
+
+}
+.sidebar img{
+    width: 80px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+.sidebar ul{
+    list-style: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+
+}
+.sidebar ul li.active,.sidebar ul li:hover{
+    background: #2874f0;
+    color: white;
+}
+.submenu{
+    padding-left: 20px;
+    font-size: 14px;
+}
+.profile-content{
+    flex-grow: 1;
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    margin-left: 20;
+}
+.profile-content h2,h3{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.form-group{
+    margin-bottom: 15px;
+}
+.form-group input{
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    background: #f9f9f9;
+
+}
+.edit-btn{
+    cursor: pointer;
+    color: #2874f0;
+    
+}
+button{
+    padding: 10px;
+    background: #2874f0;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:disabled{
+    background: gray;
+    cursor: not-allowed;
+}

@@ -158,6 +158,7 @@ body {
     justify-content: space-around;
     background-color: #f8f8f8;
     padding: 10px 0;
+    color: #333;
 }
 
 .navbar a {
@@ -165,6 +166,7 @@ body {
     color: #333;
     font-weight: bold;
 }
+
 
 /* Banner Section */
 .banner {
@@ -192,6 +194,7 @@ body {
     width: 100%;
     height: 300px;
     object-fit: contain;
+    background-color: antiquewhite;
 }
 .cateimg{
     display: block; 
@@ -238,6 +241,17 @@ input[type="search"]::-webkit-search-cancel-button {
 .slider-btn:hover {
     background: rgba(0, 0, 0, 0.8);
 }
+.suggestion-item {
+    padding: 8px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;  /* This makes the cursor change to a pointer */
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
 /* Product Section */
 .products {
     padding: 20px;

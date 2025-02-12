@@ -4,13 +4,18 @@ require_once "include/db_connect.php";
 if (isset($_GET['query'])) {
     $search = mysqli_real_escape_string($con, $_GET['query']);
 
-    // Search in products
-    $productQuery = "SELECT * FROM products WHERE productname LIKE '%$search%'";
-    $productResult = mysqli_query($con, $productQuery);
+    // Search for products that match by name, category, or subcategory
+    $productQuery = "
+        SELECT DISTINCT p.* 
+        FROM products p
+        LEFT JOIN category c ON p.categoryname = c.cid
+        LEFT JOIN subcategory s ON p.subcategoryname = s.sid
+        WHERE p.productname LIKE '%$search%' 
+        OR c.category LIKE '%$search%'
+        OR s.subcategory LIKE '%$search%'
+    ";
 
-    // Search in categories
-    $categoryQuery = "SELECT * FROM category WHERE category LIKE '%$search%'";
-    $categoryResult = mysqli_query($con, $categoryQuery);
+    $productResult = mysqli_query($con, $productQuery);
 
     echo "<h3>Search Results for '$search'</h3>";
 
@@ -25,17 +30,7 @@ if (isset($_GET['query'])) {
                   </div>";
         }
         echo "</div>";
-    }
-
-    if (mysqli_num_rows($categoryResult) > 0) {
-        echo "<h4>Categories:</h4><div class='category-list'>";
-        while ($category = mysqli_fetch_assoc($categoryResult)) {
-            echo "<a href='?category_id={$category['cid']}' class='category-item'>{$category['category']}</a>";
-        }
-        echo "</div>";
-    }
-
-    if (mysqli_num_rows($productResult) == 0 && mysqli_num_rows($categoryResult) == 0) {
+    } else {
         echo "<p>No results found.</p>";
     }
 }

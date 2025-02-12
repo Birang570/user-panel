@@ -15,12 +15,10 @@ require_once "include/db_connect.php";
 <body>
     <header class="header">
         <div class="logo">My Grocery Store</div>
-        <!-- <input type="search" id="search-bar" placeholder="Search for Grocery" class="search-bar">
-        <div id="suggestions"></div> -->
-        
+
         <div class="search-container">
             <input type="search" id="search-bar" placeholder="Search for Grocery" class="search-bar">
-            <div id="suggestions"></div> 
+            <div id="suggestions"></div>
         </div>
 
         <div class="menu">
@@ -51,14 +49,24 @@ require_once "include/db_connect.php";
             <button class="slider-btn next" onclick="nextSlide()">&#10095;</button>
         </div>
 
+        <h3 style="padding:20px;">Suggested Category</h3>
         <nav class="navbar">
             <?php
             $categoryQuery = mysqli_query($con, "SELECT * FROM category LIMIT 6");
             while ($category = mysqli_fetch_assoc($categoryQuery)) {
             ?>
-                <a href="?category_id=<?php echo $category['cid']; ?>" class="cateimg" style="background-image: url('../admin/<?php echo $category['imageurl']; ?>');">
+                <div style="background-color:#d4fff0; 
+                            align-items: center;
+                            align-content: center;
+                            display: flex;
+                            flex-direction: column;
+                            border-radius:10px;
+                            flex-wrap: wrap;">
+
+                    <a href="?category_id=<?php echo $category['cid']; ?>" class="category-link cateimg" style="background-image: url('../admin/<?php echo $category['imageurl']; ?>');"></a>
+
                     <?php echo $category['category']; ?>
-                </a>
+                </div>
             <?php } ?>
         </nav>
 
@@ -143,17 +151,30 @@ require_once "include/db_connect.php";
                         suggestionsDiv.innerHTML = "";
                         data.forEach(item => {
                             let suggestion = document.createElement("div");
-                            suggestion.textContent = item;
+                            suggestion.textContent = item.name;
                             suggestion.classList.add("suggestion-item");
+
                             suggestion.addEventListener("click", function() {
-                                searchBar.value = item;
-                                performSearch(item);
+                                searchBar.value = item.name;
+                                updateURL(item);
+                                performSearch(item.name);
                                 suggestionsDiv.innerHTML = "";
                             });
+
                             suggestionsDiv.appendChild(suggestion);
                         });
                     });
             });
+
+            function updateURL(item) {
+                if (item.type === "category") {
+                    history.pushState({}, "", `?category=${encodeURIComponent(item.name)}`);
+                } else if (item.type === "subcategory") {
+                    history.pushState({}, "", `?subcategory=${encodeURIComponent(item.name)}`);
+                } else {
+                    history.pushState({}, "", `?query=${encodeURIComponent(item.name)}`);
+                }
+            }
 
             function performSearch(searchTerm) {
                 fetch(`search_results.php?query=${searchTerm}`)
@@ -162,7 +183,15 @@ require_once "include/db_connect.php";
                         document.querySelector(".main").innerHTML = html;
                     });
             }
+
+            // Reload main page when search bar is cleared
+            searchBar.addEventListener("keyup", function(event) {
+                if (searchBar.value.trim() === "") {
+                    location.href = "index.php"; // Replace with your main page
+                }
+            });
         });
+
         document.addEventListener("DOMContentLoaded", function() {
             // const cartCountSpan = document.getElementById('cart-count');
             const addToCartButtons = document.querySelectorAll('.add-to-cart');

@@ -1,5 +1,23 @@
 <?php
+session_start();
+
 require_once "include/db_connect.php";
+
+// if (isset($_SESSION['username'])) {
+//     $userLoggedIn = true;
+//     $username = $_SESSION['username'];
+// } else {
+//     $userLoggedIn = false;
+//     header("Location: php/login.php");
+// }
+
+// Check if the form is submitted for logout
+if (isset($_POST['logout'])) {
+    session_unset();
+    session_destroy();
+    header("Location: index.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,14 +41,17 @@ require_once "include/db_connect.php";
 
         <div class="menu">
             <div class="dropdown">
-                <button class="dropdown-btn">User</button>
+                <button class="dropdown-btn"><?PHP echo isset($_SESSION['username']) ? $_SESSION['username'] : 'User' ?></button>
                 <div class="dropdown-menu">
-                    <a href="html/profile.html">My Profile</a>
-                    <a href="#">Orders</a>
-                    <a href="#">Logout</a>
+                    <a href="php/profile.php">My Profile</a>
+                    <a href="php/order.php">Orders</a>
+                    <a href="#">Settings</a>
+                    <form action="" method="post">
+                        <?PHP echo isset($_SESSION['username']) ? '<button style="border: none; background: none;" type="submit" name="logout">Logout</button>' : '<a href="php/login.php" style="padding: 0;">Login</a>' ?>
+                    </form>
                 </div>
             </div>
-            <a class="cart-button" href="html/cart.php" id="cart-button">Cart</a>
+            <a class="cart-button" href="php/cart.php" id="cart-button">Cart</a>
         </div>
     </header>
     <div class="main">
@@ -88,7 +109,12 @@ require_once "include/db_connect.php";
                         <img src="../admin/<?php echo $product['productimage1'] ?>" alt="<?php echo $product['productname'] ?>">
                         <h4><?php echo $product['productname'] ?></h4>
                         <p>₹<?php echo $product['productprice'] ?></p>
-                        <button class="add-to-cart" data-name="<?php echo $product['productname'] ?>" data-price="<?php echo $product['productprice'] ?>">Add to Cart</button>
+                        <?php if (isset($_SESSION['username'])) {?>
+                            <button class="add-to-cart" data-name="<?php echo $product['productname'] ?>" data-price="<?php echo $product['productprice'] ?>" disabled>Add to Cart</button>
+                        <?php } else { ?>
+                            <button class="add-to-cart" data-name="<?php echo $product['productname'] ?>" data-price="<?php echo $product['productprice'] ?>">Add to Cart</button>
+                        <?php } ?>
+
                     </div>
                 <?php } ?>
             </div>
@@ -193,6 +219,7 @@ require_once "include/db_connect.php";
         });
 
         document.addEventListener("DOMContentLoaded", function() {
+            
             // const cartCountSpan = document.getElementById('cart-count');
             const addToCartButtons = document.querySelectorAll('.add-to-cart');
 

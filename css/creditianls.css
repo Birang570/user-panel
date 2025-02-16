@@ -1,0 +1,240 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #222;
+    background-size: 100% 100%;
+    animation: gradient-animation 15s ease infinite; /
+}
+
+/* Gradient Animation */
+@keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Login Container Styling */
+.login-container {
+    width: 380px;
+    padding: 25px 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
+    animation: fadeInUp 1.5s ease-out;
+}
+
+/* Fade-in Animation */
+@keyframes fadeInUp {
+    0% { opacity: 0; transform: translateY(50px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Heading Style */
+.login-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #fff;
+    font-size: 30px;
+    letter-spacing: 1px;
+}
+
+/* Input Field Styling */
+.login-container .input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.login-container .input-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+    outline: none;
+    transition: 0.3s;
+}
+
+
+/* Floating Label Styling */
+.login-container .input-group label {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.login-container .input-group input:focus + label,
+.login-container .input-group input:not(:placeholder-shown) + label {
+    top: -8px;
+    left: 10px;
+    font-size: 12px;
+    color: #f83838;
+    background: #1e293b;
+    padding: 0 5px;
+    border-radius: 5px;
+}
+
+/* Button Styling */
+.login-container .btn {
+    width: 100%;
+    padding: 14px 0;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(90deg, #00000000, #00000000);
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+}
+
+.login-container .btn:hover {
+    background: linear-gradient(90deg, #000000, #000000);
+    transform: scale(1.05);
+    box-shadow: 0 12px 20px rgba(12, 4, 4, 0.5);
+}
+/* Forgot Password Button */
+.forgot-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px 0;
+    border: none;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #f97316, #fb923c);
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.forgot-btn:hover {
+    background: linear-gradient(90deg, #fb923c, #f97316);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.3);
+}
+
+
+
+/* Signup Link */
+.signup-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.signup-link a {
+    color: #f83838;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-link a:hover {
+    text-decoration: underline;
+    color: #eb2525;
+}
+/* Custom Alert Box Styling */
+.custom-alert {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.custom-alert-content {
+    background: linear-gradient(135deg, #1e40af, #1d4ed8);
+    padding: 20px 30px;
+    border-radius: 10px;
+    text-align: center;
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.custom-alert-content p {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: #f9fafb;
+}
+
+.alert-btn {
+    padding: 10px 20px;
+    background: linear-gradient(90deg, #2563eb, #3b82f6);
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.alert-btn:hover {
+    background: linear-gradient(90deg, #3b82f6, #2563eb);
+    transform: translateY(-2px);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+/* Instruction Text Styling */
+.instruction {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 20px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+/* Login Link Styling */
+.login-link {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.login-link a {
+    color: #f83838;
+    text-decoration: none;
+}
+
+.login-link a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+

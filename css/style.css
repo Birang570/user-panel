@@ -78,7 +78,7 @@ body {
     z-index: 1;
 }
 
-.dropdown-menu a {
+.dropdown-menu a, .dropdown-menu form {
     display: block;
     padding: 10px;
     color: #333;
@@ -90,7 +90,7 @@ body {
     border-bottom: none;
 }
 
-.dropdown-menu a:hover {
+.dropdown-menu a:hover, .dropdown-menu form:hover {
     background-color: #f1f1f1;
 }
 
@@ -100,6 +100,7 @@ body {
     border: none;
     cursor: pointer;
     border-radius: 4px;
+    
 }
 
 .banner {
@@ -312,6 +313,7 @@ input[type="search"]::-webkit-search-cancel-button {
     font-size: 16px;
     cursor: pointer;
     border-radius: 5px;
+    text-decoration: none;
 }
 
 .cart-button:hover {

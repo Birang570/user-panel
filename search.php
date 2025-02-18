@@ -23,4 +23,3 @@ if (isset($_GET['query'])) {
 
     echo json_encode($suggestions);
 }
-?>

@@ -18,6 +18,20 @@ if (isset($_POST['logout'])) {
     header("Location: index.php");
     exit;
 }
+
+if (isset($_POST['addCart'])) {
+    $productid = $_POST['productid'];
+    $userid = $_SESSION['uid'];
+
+    $cartQuery = mysqli_query($con, "SELECT * FROM cart WHERE userid = $userid AND productid = $productid");
+    if (mysqli_num_rows($cartQuery) > 0) {
+        $cart = mysqli_fetch_assoc($cartQuery);
+        // $quantity = $cart['quantity'] + 1;
+        mysqli_query($con, "UPDATE cart SET quantity = quantity+1 WHERE userid = $userid AND productid = $productid");
+    } else {
+        mysqli_query($con, "INSERT INTO cart (userid, productid) VALUES ($userid, $productid)");
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +59,6 @@ if (isset($_POST['logout'])) {
                 <div class="dropdown-menu">
                     <a href="php/profile.php">My Profile</a>
                     <a href="php/order.php">Orders</a>
-                    <a href="#">Settings</a>
                     <form action="" method="post">
                         <?PHP echo isset($_SESSION['username']) ? '<button style="border: none; background: none;" type="submit" name="logout">Logout</button>' : '<a href="php/login.php" style="padding: 0;">Login</a>' ?>
                     </form>
@@ -54,16 +67,15 @@ if (isset($_POST['logout'])) {
             <a class="cart-button" href="php/cart.php" id="cart-button">Cart</a>
         </div>
     </header>
-    <div class="main">
+    <div class="main" id="main">
         <div class="slider">
             <div class="slides" id="slides">
-                <div class="slide"><img class="" src="../admin/img/product/black walkswagon.png" alt="Slide 1"></div>
-                <div class="slide"><img src="../admin/img/product/bob car.png" alt="Slide 2"></div>
-                <div class="slide"><img src="../admin/img/product/oggy car.png" alt="Slide 3"></div>
-                <div class="slide"><img src="../admin/img/product/red Walkswagon.png" alt="Slide 4"></div>
-                <div class="slide"><img src="../admin/img/product/short gun.png" alt="Slide 5"></div>
-                <div class="slide"><img src="../admin/img/product/top.png" alt="Slide 6"></div>
-                <div class="slide"><img src="../admin/img/product/white walkswalgon.png" alt="Slide 7"></div>
+                <?php
+                $bannerQuery = mysqli_query($con, "SELECT * FROM banner WHERE bstatus = 1 LIMIT 7");
+                while ($banner = mysqli_fetch_assoc($bannerQuery)) {
+                ?>
+                    <div class="slide"><img class="" src="../admin/<?php echo $banner['bannerimageurl']; ?>" alt="Slide"></div>
+                <?php } ?>
             </div>
             <!-- Buttons for navigation -->
             <button class="slider-btn prev" onclick="prevSlide()">&#10094;</button>
@@ -73,7 +85,7 @@ if (isset($_POST['logout'])) {
         <h3 style="padding:20px;">Suggested Category</h3>
         <nav class="navbar">
             <?php
-            $categoryQuery = mysqli_query($con, "SELECT * FROM category LIMIT 6");
+            $categoryQuery = mysqli_query($con, "SELECT * FROM category WHERE cstatus = 1 LIMIT 6");
             while ($category = mysqli_fetch_assoc($categoryQuery)) {
             ?>
                 <div style="background-color:#d4fff0; 
@@ -84,7 +96,10 @@ if (isset($_POST['logout'])) {
                             border-radius:10px;
                             flex-wrap: wrap;">
 
-                    <a href="?category_id=<?php echo $category['cid']; ?>" class="category-link cateimg" style="background-image: url('../admin/<?php echo $category['imageurl']; ?>');"></a>
+                    <a href="javascript:void(0);" class="category-link cateimg"
+                        style="background-image: url('../admin/<?php echo $category['imageurl']; ?>');"
+                        onclick="loadCategory(<?php echo $category['cid']; ?>)">
+                    </a>
 
                     <?php echo $category['category']; ?>
                 </div>
@@ -102,17 +117,20 @@ if (isset($_POST['logout'])) {
                     $categoryFilter = "WHERE categoryname = $category_id";
                 }
 
-                $productQuery = mysqli_query($con, "SELECT * FROM products $categoryFilter LIMIT 10");
+                $productQuery = mysqli_query($con, "SELECT * FROM products $categoryFilter where pstatus = 1 LIMIT 10");
                 while ($product = mysqli_fetch_assoc($productQuery)) {
                 ?>
                     <div class="product">
                         <img src="../admin/<?php echo $product['productimage1'] ?>" alt="<?php echo $product['productname'] ?>">
                         <h4><?php echo $product['productname'] ?></h4>
                         <p>₹<?php echo $product['productprice'] ?></p>
-                        <?php if (isset($_SESSION['username'])) {?>
-                            <button class="add-to-cart" data-name="<?php echo $product['productname'] ?>" data-price="<?php echo $product['productprice'] ?>" disabled>Add to Cart</button>
+                        <?php if (isset($_SESSION['username'])) { ?>
+                            <form action="" method="post">
+                                <input type="text" name="productid" value="<?php echo $product['pid'] ?>" hidden>
+                                <button class="add-to-cart" name="addCart">Add to Cart</button>
+                            </form>
                         <?php } else { ?>
-                            <button class="add-to-cart" data-name="<?php echo $product['productname'] ?>" data-price="<?php echo $product['productprice'] ?>">Add to Cart</button>
+                            <button class="add-to-cart" disabled>Add to Cart</button>
                         <?php } ?>
 
                     </div>
@@ -125,8 +143,31 @@ if (isset($_POST['logout'])) {
         <p>© 2025 My Grocery Store</p>
     </footer>
 
-    <script src="javascript/script.js"></script>
+    <!-- <script src="javascript/script.js"></script> -->
     <script>
+        document.querySelector('.dropdown-btn').addEventListener('click', () => {
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (!e.target.matches('.dropdown-btn')) {
+                document.querySelector('.dropdown-menu').style.display = 'none';
+            }
+        });
+
+        function loadCategory(categoryId) {
+            // Clear the entire page content except for the header/sidebar
+            document.getElementById("main").innerHTML = "<h2>Loading products...</h2>";
+
+            fetch(`fetch_products.php?category_id=${categoryId}`)
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById("main").innerHTML = html;
+                })
+                .catch(error => console.error("Error fetching products:", error));
+        }
+
         let index = 0;
         const slides = document.getElementById('slides');
         const totalSlides = document.querySelectorAll('.slide').length;
@@ -148,17 +189,6 @@ if (isset($_POST['logout'])) {
         // Auto-slide every 3 seconds
         setInterval(nextSlide, 3000);
 
-        // Cart functionality
-        let cartCount = 0;
-        // const cartCountSpan = document.getElementById('cart-count');
-        const addToCartButtons = document.querySelectorAll('.add-to-cart');
-
-        addToCartButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                cartCount++;
-                // cartCountSpan.textContent = cartCount;
-            });
-        });
         document.addEventListener("DOMContentLoaded", function() {
             const searchBar = document.getElementById("search-bar");
             const suggestionsDiv = document.getElementById("suggestions");
@@ -216,52 +246,6 @@ if (isset($_POST['logout'])) {
                     location.href = "index.php"; // Replace with your main page
                 }
             });
-        });
-
-        document.addEventListener("DOMContentLoaded", function() {
-            
-            // const cartCountSpan = document.getElementById('cart-count');
-            const addToCartButtons = document.querySelectorAll('.add-to-cart');
-
-            function getCart() {
-                return JSON.parse(localStorage.getItem("cart")) || [];
-            }
-
-            function saveCart(cart) {
-                localStorage.setItem("cart", JSON.stringify(cart));
-            }
-
-            function updateCartCount() {
-                const cart = getCart();
-                // cartCountSpan.textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
-            }
-
-            addToCartButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const name = button.getAttribute('data-name');
-                    const price = parseFloat(button.getAttribute('data-price'));
-                    const image = button.parentElement.querySelector("img").src;
-
-                    let cart = getCart();
-                    let existingProduct = cart.find(item => item.name === name);
-
-                    if (existingProduct) {
-                        existingProduct.quantity += 1;
-                    } else {
-                        cart.push({
-                            name,
-                            price,
-                            quantity: 1,
-                            image
-                        });
-                    }
-
-                    saveCart(cart);
-                    updateCartCount();
-                });
-            });
-
-            updateCartCount();
         });
     </script>
 </body>

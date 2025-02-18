@@ -8,17 +8,18 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'];
 
     // Implement proper password hashing and validation using prepared statements
-    $sql = "SELECT username FROM users WHERE contactno = ? AND password = ?";
+    $sql = "SELECT username,uid FROM users WHERE contactno = ? AND password = ?";
     $stmt = mysqli_prepare($con, $sql);
     mysqli_stmt_bind_param($stmt, "ss", $phone, $password);
     mysqli_stmt_execute($stmt);
     mysqli_stmt_store_result($stmt);
     if (mysqli_stmt_num_rows($stmt) == 1) {
-        mysqli_stmt_bind_result($stmt, $username);
+        mysqli_stmt_bind_result($stmt, $username,$uid);
         mysqli_stmt_fetch($stmt);
 
         // $_SESSION['user_id'] = $user_id;
         $_SESSION['username'] = $username;
+        $_SESSION['uid'] = $uid;
 
         // ini_set('session.cookie_lifetime', 60 * 60 * 24 * 30); // Set a longer session expiration time (e.g., 30 days)
 

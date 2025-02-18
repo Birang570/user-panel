@@ -2,7 +2,7 @@
 session_start();
 require_once "../include/db_connect.php";
 
-$username = $_SESSION['username'] ?? '';
+$username = $_SESSION['username'];
 if (!$username) {
     die("User not logged in");
 }

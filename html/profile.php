@@ -4,21 +4,23 @@ require_once "../include/db_connect.php";
 if (isset($_SESSION['username'])) {
     $userLoggedIn = true;
     $username = $_SESSION['username'];
+    $uid = $_SESSION['uid'];
 } else {
     $userLoggedIn = false;
     header("Location: login.php");
 }
-$profile = mysqli_query($con, "select * from users where username='$username'");
+$profile = mysqli_query($con, "select * from users where uid='$uid'");
 $row = mysqli_fetch_assoc($profile);
 
 if (isset($_POST['submit'])) {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $mobile = $_POST['mobile'];
-    $update = mysqli_query($con, "update users set username='$name', email='$email', contactno='$mobile' where username='$username'");
+    $update = mysqli_query($con, "update users set username='$name', email='$email', contactno='$mobile' where uid='$uid'");
     if ($update) {
         header("Location: ../index.php");
     }
+    $_SESSION['username'] = $name;
 }
 ?>
 

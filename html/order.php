@@ -145,7 +145,7 @@ if (isset($_SESSION['username'])) {
             $order = mysqli_query($con, "SELECT users.username, products.*, orders.* FROM orders 
     JOIN users ON users.uid = orders.userId
     JOIN products ON products.pid = orders.productId
-    WHERE username = '$username'");
+    WHERE username = '$username' group by products.pid, orders.orderDate");
             if (mysqli_num_rows($order) > 0) {
                 while ($row = mysqli_fetch_array($order)) {
             ?>

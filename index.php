@@ -3,14 +3,6 @@ session_start();
 
 require_once "include/db_connect.php";
 
-// if (isset($_SESSION['username'])) {
-//     $userLoggedIn = true;
-//     $username = $_SESSION['username'];
-// } else {
-//     $userLoggedIn = false;
-//     header("Location: php/login.php");
-// }
-
 // Check if the form is submitted for logout
 if (isset($_POST['logout'])) {
     session_unset();
@@ -46,7 +38,7 @@ if (isset($_POST['addCart'])) {
 
 <body>
     <header class="header">
-        <div class="logo">My Grocery Store</div>
+        <div class="logo"><?php echo $storeName; ?></div>
 
         <div class="search-container">
             <input type="search" id="search-bar" placeholder="Search for Grocery" class="search-bar">
@@ -130,7 +122,7 @@ if (isset($_POST['addCart'])) {
                                 <button class="add-to-cart" name="addCart">Add to Cart</button>
                             </form>
                         <?php } else { ?>
-                            <button class="add-to-cart" disabled>Add to Cart</button>
+                            <button class="add-to-cart" style="cursor: not-allowed;" disabled>Add to Cart</button>
                         <?php } ?>
 
                     </div>

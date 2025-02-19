@@ -8,6 +8,19 @@ if (isset($_SESSION['username'])) {
     $userLoggedIn = false;
     header("Location: login.php");
 }
+if (isset($_POST['addCart'])) {
+    $productid = $_POST['productid'];
+    $userid = $_SESSION['uid'];
+
+    $cartQuery = mysqli_query($con, "SELECT * FROM cart WHERE userid = $userid AND productid = $productid");
+    if (mysqli_num_rows($cartQuery) > 0) {
+        $cart = mysqli_fetch_assoc($cartQuery);
+        // $quantity = $cart['quantity'] + 1;
+        mysqli_query($con, "UPDATE cart SET quantity = quantity+1 WHERE userid = $userid AND productid = $productid");
+    } else {
+        mysqli_query($con, "INSERT INTO cart (userid, productid) VALUES ($userid, $productid)");
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -122,7 +135,8 @@ if (isset($_SESSION['username'])) {
             background-color: #218838;
             transform: scale(1.05);
         }
-        header{
+
+        header {
             background-color: #fff;
             display: flex;
             height: 40px;
@@ -136,7 +150,7 @@ if (isset($_SESSION['username'])) {
 
 <body>
     <header>
-        <h2 style="padding: 0; margin: 0;">My Grocery Orders</h2>
+        <h2 style="padding: 0; margin: 0;"><?php echo $storeName; ?></h2>
         <a class="cart-button" href="cart.php" id="cart-button">Cart</a>
     </header>
     <div class="container">
@@ -145,7 +159,7 @@ if (isset($_SESSION['username'])) {
             $order = mysqli_query($con, "SELECT users.username, products.*, orders.* FROM orders 
     JOIN users ON users.uid = orders.userId
     JOIN products ON products.pid = orders.productId
-    WHERE username = '$username' group by products.pid, orders.orderDate");
+    WHERE username = '$username' group by products.pid, orders.orderDate order by orders.orderDate desc");
             if (mysqli_num_rows($order) > 0) {
                 while ($row = mysqli_fetch_array($order)) {
             ?>
@@ -165,6 +179,10 @@ if (isset($_SESSION['username'])) {
                             <p><strong>Quantity:</strong> <?php echo $row['quantity'] ?></p>
                             <p><strong>Total Price:</strong> ₹<?php echo $row['quantity'] * $row['productprice'] ?></p>
                             <p><strong>Status:</strong> <?php echo $row['orderStatus'] ?></p>
+                            <form action="" method="post">
+                                <input type="text" name="productid" value="<?php echo $row['pid'] ?>" hidden>
+                                <button class="add-to-cart" name="addCart">Add to Cart</button>
+                            </form>
                         </div>
                     </div>
             <?php

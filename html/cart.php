@@ -2,7 +2,12 @@
 session_start();
 require_once "../include/db_connect.php";
 
-$userid = $_SESSION['uid'];
+if (isset($_SESSION["uid"])) {
+    $userid = $_SESSION['uid'];
+} else {
+    header("Location: login.php");
+    exit;
+}
 
 // Fetch user shipping address
 $addressQuery = mysqli_query($con, "SELECT shippingaddress FROM users WHERE uid = '$userid'");
@@ -64,7 +69,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <header>
         <nav class="navbar">
-            <div class="logo">Flipkart <span>Explore Plus</span></div>
+            <div class="logo"><?php echo $storeName; ?></div>
             <button class="cart-btn cart-button" id="cart-button">Cart <span id="cart-count">(0)</span></button>
         </nav>
     </header>
@@ -223,6 +228,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     location.reload(); // Reload to clear cart UI
                 } else if (data === "cart_empty") {
                     alert("Your cart is empty!");
+                } else if (data === "order_amount_too_low") {
+                    alert("Your total cart amount is below the minimum order amount!");
                 } else {
                     alert("Failed to place order. Try again.");
                 }

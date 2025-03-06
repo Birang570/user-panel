@@ -202,6 +202,7 @@ body {
     width: 100px; 
     height: 100px; 
     background-size: cover; 
+    object-fit: cover;
     background-position: center; 
     background-repeat: no-repeat;
 }
@@ -382,4 +383,21 @@ input[type="search"]::-webkit-search-cancel-button {
 
 .product button:hover {
     background-color: #218838;
+}
+
+.product-image {
+    width: 200px; /* Adjust based on potato image */
+    height: 200px; /* Adjust based on potato image */
+    object-fit: cover; /* Ensures the image fills the box without distortion */
+    border-radius: 10px; /* Optional: adds rounded corners like the potato image */
+}
+.image-container {
+    /* width: 200px;  */
+    height: 200px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white; /* or a color matching your theme */
+    border-radius: 10px;
+    overflow: hidden;
 }

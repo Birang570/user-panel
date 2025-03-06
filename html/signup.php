@@ -1,6 +1,7 @@
 <?php
 require_once "../include/db_connect.php";
 $isPassMatch = true;
+$isPass = true;
 if (isset($_POST['sign'])) {
     $username1 = $_POST['name'];
     $email = $_POST['email'];
@@ -8,29 +9,34 @@ if (isset($_POST['sign'])) {
     $password1 = $_POST['password'];
     $password2 = $_POST['confirmPassword'];
 
-    if ($password1 == $password2) {
+    if(preg_match("/^(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/", $password1)) 
+    {
+        if ($password1 == $password2) {
+            $password1 = encryptData($password1);
+            //checking if the user exists in the database
+            $sql4 = "SELECT * FROM users WHERE contactno='$mobile'";
+            $result = mysqli_query($con, $sql4);
+            $count = mysqli_num_rows($result);
 
-        //checking if the user exists in the database
-        $sql4 = "SELECT * FROM users WHERE contactno='$mobile'";
-        $result = mysqli_query($con, $sql4);
-        $count = mysqli_num_rows($result);
+            if ($count == 0) {
+                $sql5 = "INSERT INTO users(username, email, password, contactno) VALUES('$username1', '$email', '$password1', '$mobile')";
+                $result1 = mysqli_query($con, $sql5);
 
-        if ($count == 0) {
-            $sql5 = "INSERT INTO users(username, email, password, contactno) VALUES('$username1', '$email', '$password1', '$mobile')";
-            $result1 = mysqli_query($con, $sql5);
-
-            if ($result1) {
-                echo "Successfully signed up";
+                if ($result1) {
+                    echo "Successfully signed up";
+                }
+            } else {
+                $loginError = "This Phone No is already taken";
+                header("Location: signup.php?error=" . urlencode($loginError));
+                exit;
             }
-        } else {
-            $loginError = "This Phone No is already taken";
-            header("Location: signup.php?error=" . urlencode($loginError));
+            header("Location: login.php");
             exit;
+        } else {
+            $isPassMatch = false;
         }
-        header("Location: login.php");
-        exit;
     } else {
-        $isPassMatch = false;
+        $isPass = false;
     }
 }
 ?>
@@ -62,11 +68,15 @@ if (isset($_POST['sign'])) {
             <?php
             $display = 'transparent';
             $display1 = 'transparent';
+            $display2 = 'none';
             if (isset($_GET['error'])) {
                 $display = 'red';
             }
             if ($isPassMatch == false) {
                 $display1 = 'red';
+            }
+            if ($isPass == false) {
+                $display2 = 'block';
             }
             ?>
             <p align='center' id='warning' style='color: <?php echo $display; ?>;'>This Phone No is already Used</p>
@@ -74,7 +84,7 @@ if (isset($_POST['sign'])) {
             <!-- Username Field -->
             <div class="input-group">
                 <label for="username"></label>
-                <input type="text" id="username" name="name" placeholder="Enter your username" required>
+                <input type="text" id="username" name="name" placeholder="Enter username" minlength="2" title="Enter username with minimum 2 character" pattern="[A-Za-z0-9]+" required>
             </div>
 
             <!-- Email Field -->
@@ -86,13 +96,14 @@ if (isset($_POST['sign'])) {
             <!-- Mobile Field -->
             <div class="input-group">
                 <label for="mobile"></label>
-                <input type="tel" id="mobile" name="mobile" placeholder="Enter your mobile number" required>
+                <input type="tel" id="mobile" name="mobile" minlength="10" maxlength="10" title="Enter your 10 Digit mobile number" placeholder="Enter your mobile number" required>
             </div>
 
             <!-- Password Field -->
             <div class="input-group">
                 <label for="password"></label>
-                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <input type="password" id="password" minlength="8" maxlength="16" title="Enter your Password with minimum 8 character long only allowed charater, digit, 1 uppercase" pattern="[A-Za-z0-9]+" name="password" placeholder="Enter your password" required>
+                <p align='center' id='warning' style='color: red; display: <?php echo $display2; ?>;'>Password must be minimum 8 character long only allowed charater, digit, 1 uppercase</p>
             </div>
 
             <!-- Confirm Password Field -->

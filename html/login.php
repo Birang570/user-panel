@@ -6,7 +6,7 @@ require_once "../include/db_connect.php";
 if (isset($_POST['login'])) {
     $phone = $_POST['phone'];
     $password = $_POST['password'];
-
+    $password = encryptData($password);
     // Implement proper password hashing and validation using prepared statements
     $sql = "SELECT username,uid FROM users WHERE contactno = ? AND password = ?";
     $stmt = mysqli_prepare($con, $sql);

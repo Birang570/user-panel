@@ -69,7 +69,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <header>
         <nav class="navbar">
-            <div class="logo"><?php echo $storeName; ?></div>
+            <div style="display: flex; justify-content: space-between; width: 180px; font-size: xx-large;">
+                <a href="../" style="text-decoration: none; color: whitesmoke;" class="logo">&lt;</a>
+                <div class="logo"><?php echo $storeName; ?></div>
+            </div>
             <button class="cart-btn cart-button" id="cart-button">Cart <span id="cart-count">(0)</span></button>
         </nav>
     </header>
@@ -158,6 +161,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             });
 
             document.getElementById("item-count").textContent = itemCount;
+            document.getElementById("cart-count").textContent = "(" + itemCount + ")";
             document.querySelector(".price-value").textContent = "₹" + totalPrice;
             document.querySelector(".total-value").textContent = "₹" + totalPrice;
         }
@@ -230,6 +234,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     alert("Your cart is empty!");
                 } else if (data === "order_amount_too_low") {
                     alert("Your total cart amount is below the minimum order amount!");
+                } else if (data.startsWith("insufficient_stock_")) {
+                    let productId = data.replace("insufficient_stock_", "");
+                    alert(`One or more items in your cart are incuficient stock! Product Name: ${productId}`);
                 } else {
                     alert("Failed to place order. Try again.");
                 }

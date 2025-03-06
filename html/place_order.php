@@ -20,25 +20,45 @@ if ($totalAmount < $orderamount) {
     exit;
 }
 
-// Fetch user's cart items
-$productQuery = mysqli_query($con, "SELECT productid, quantity FROM cart WHERE userid = '$userid'");
+// Fetch user's cart items and check stock availability
+$productQuery = mysqli_query($con, "SELECT cart.productid, cart.quantity, products.stock_in, products.productname 
+                                    FROM cart 
+                                    JOIN products ON cart.productid = products.pid 
+                                    WHERE cart.userid = '$userid'");
 
-if (mysqli_num_rows($productQuery) > 0) {
-    while ($row = mysqli_fetch_assoc($productQuery)) {
-        $productid = $row['productid'];
-        $quantity = $row['quantity'];
+$insufficientStock = false;
+$products = [];
 
-        // Insert order details into the orders table
-        mysqli_query($con, "INSERT INTO orders (userid, productid, quantity) VALUES ('$userid', '$productid', '$quantity')");
+while ($row = mysqli_fetch_assoc($productQuery)) {
+    $productid = $row['productid'];
+    $productname = $row['productname'];
+    $quantity = $row['quantity'];
+    $stock = $row['stock_in'];
+
+    if ($quantity > $stock) {
+        echo "insufficient_stock_$productname"; // Indicate which product is out of stock
+        exit;
     }
 
-    // Clear the cart after placing the order
-    mysqli_query($con, "DELETE FROM cart WHERE userid = '$userid'");
-    
-    mysqli_query($con, "update products set stock_in=stock_in-$quantity WHERE pid = '$productid'");
-
-    echo "order_placed";
-} else {
-    echo "cart_empty";
+    $products[] = [
+        'productid' => $productid,
+        'quantity' => $quantity
+    ];
 }
-?>
+
+// If stock is sufficient for all products, proceed with placing the order
+foreach ($products as $product) {
+    $productid = $product['productid'];
+    $quantity = $product['quantity'];
+
+    // Insert order details into the orders table
+    mysqli_query($con, "INSERT INTO orders (userid, productid, quantity) VALUES ('$userid', '$productid', '$quantity')");
+
+    // Deduct the stock after successful order placement
+    mysqli_query($con, "UPDATE products SET stock_in = stock_in - $quantity WHERE pid = '$productid'");
+}
+
+// Clear the cart after placing the order
+mysqli_query($con, "DELETE FROM cart WHERE userid = '$userid'");
+
+echo "order_placed";

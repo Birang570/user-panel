@@ -38,7 +38,14 @@ if (isset($_POST['addCart'])) {
 
 <body>
     <header class="header">
-        <div class="logo"><?php echo $storeName; ?></div>
+        <div style="display: flex; justify-content: space-between; width: 180px; font-size: xx-large;">
+            <?php
+            if (isset($_POST['query']) || isset($_GET['category_id'])) {
+                echo '<a href="index.php" style="text-decoration: none; color: whitesmoke;" class="logo">&lt;</a>';
+            }
+            ?>
+            <div class="logo"><?php echo $storeName; ?></div>
+        </div>
 
         <div class="search-container">
             <input type="search" id="search-bar" placeholder="Search for Grocery" class="search-bar">
@@ -80,7 +87,7 @@ if (isset($_POST['addCart'])) {
             $categoryQuery = mysqli_query($con, "SELECT * FROM category WHERE cstatus = 1 LIMIT 6");
             while ($category = mysqli_fetch_assoc($categoryQuery)) {
             ?>
-                <div style="background-color:#d4fff0; 
+                <div style="width: 100px;
                             align-items: center;
                             align-content: center;
                             display: flex;
@@ -92,8 +99,7 @@ if (isset($_POST['addCart'])) {
                         style="background-image: url('../admin/<?php echo $category['imageurl']; ?>');"
                         onclick="loadCategory(<?php echo $category['cid']; ?>)">
                     </a>
-
-                    <?php echo $category['category']; ?>
+                    <p style="text-align: center;"><?php echo $category['category']; ?></p>
                 </div>
             <?php } ?>
         </nav>
@@ -109,18 +115,24 @@ if (isset($_POST['addCart'])) {
                     $categoryFilter = "WHERE categoryname = $category_id";
                 }
 
-                $productQuery = mysqli_query($con, "SELECT * FROM products $categoryFilter where pstatus = 1 LIMIT 10");
+                $productQuery = mysqli_query($con, "SELECT * FROM products $categoryFilter where pstatus = 1 LIMIT 12");
                 while ($product = mysqli_fetch_assoc($productQuery)) {
                 ?>
                     <div class="product">
-                        <img src="../admin/<?php echo $product['productimage1'] ?>" alt="<?php echo $product['productname'] ?>">
+                        <div class="image-container">
+                            <img src="../admin/<?php echo $product['productimage1'] ?>" class="product-image" alt="<?php echo $product['productname'] ?>">
+                        </div>
                         <h4><?php echo $product['productname'] ?></h4>
                         <p>₹<?php echo $product['productprice'] ?></p>
-                        <?php if (isset($_SESSION['username'])) { ?>
-                            <form action="" method="post">
-                                <input type="text" name="productid" value="<?php echo $product['pid'] ?>" hidden>
-                                <button class="add-to-cart" name="addCart">Add to Cart</button>
-                            </form>
+                        <?php if (isset($_SESSION['username'])) {
+                            if ($product['stock_in'] > 0) { ?>
+                                <form action="" method="post">
+                                    <input type="text" name="productid" value="<?php echo $product['pid'] ?>" hidden>
+                                    <button class="add-to-cart" name="addCart">Add to Cart</button>
+                                </form>
+                            <?php } else { ?>
+                                <button class="add-to-cart" style="cursor: not-allowed; background-color: #0098c7;" disabled>Out Of Stock</button>
+                            <?php } ?>
                         <?php } else { ?>
                             <button class="add-to-cart" style="cursor: not-allowed;" disabled>Add to Cart</button>
                         <?php } ?>
@@ -132,7 +144,7 @@ if (isset($_POST['addCart'])) {
     </div>
     <footer class="footer">
         <h2>THANK YOU FOR VISITING</h2>
-        <p>© 2025 My Grocery Store</p>
+        <p>© 2025 <?php echo $storeName; ?></p>
     </footer>
 
     <!-- <script src="javascript/script.js"></script> -->
@@ -152,7 +164,13 @@ if (isset($_POST['addCart'])) {
             // Clear the entire page content except for the header/sidebar
             document.getElementById("main").innerHTML = "<h2>Loading products...</h2>";
 
-            fetch(`fetch_products.php?category_id=${categoryId}`)
+            fetch("fetch_products.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: `category_id=${encodeURIComponent(categoryId)}`,
+                })
                 .then(response => response.text())
                 .then(html => {
                     document.getElementById("main").innerHTML = html;

@@ -25,13 +25,16 @@ if (isset($_GET['query'])) {
             echo "<div class='product'>
                     <img src='../admin/{$product['productimage1']}' alt='{$product['productname']}'>
                     <h4>{$product['productname']}</h4>
-                    <p>₹{$product['productprice']}</p>
-                    <button class='add-to-cart' data-name='{$product['productname']}' data-price='{$product['productprice']}'>Add to Cart</button>
-                  </div>";
+                    <p>₹{$product['productprice']}</p>";
+            if ($product['stock_in'] > 0) {
+                echo "<button class='add-to-cart' data-name='{$product['productname']}' data-price='{$product['productprice']}'>Add to Cart</button>";
+            } else {
+                echo "<button class='add-to-cart' style='cursor: not-allowed; background-color: #0098c7;' disabled>Out Of Stock</button>";
+            }
+            echo "</div>";
         }
         echo "</div>";
     } else {
         echo "<p>No results found.</p>";
     }
 }
-?>
